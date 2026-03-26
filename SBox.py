@@ -84,6 +84,7 @@ def main():
 
     recovered = key_recovery(pairs, input_mask, output_mask, bias)
     print(f"\nActual parity(K & {input_mask:04b}) = {parity(key & input_mask)}")
+    print(f"Parity approximation success = {recovered == parity(key & input_mask)}")
 
 if __name__ == "__main__":
     main()
