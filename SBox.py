@@ -18,7 +18,7 @@ def linearApprox(input_mask, output_mask):
         if in_parity == out_parity:
             matches += 1
 
-    return matches - (SIZE_SBOX // 2)  # (#matches − 8)
+    return matches - (SIZE_SBOX // 2)
 
 def main():
     sys.stdout.write("    | ")
