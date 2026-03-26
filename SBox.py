@@ -4,10 +4,8 @@ import sys
 sbox = [0xE, 0x4, 0xD, 0x1, 0x2, 0xF, 0xB, 0x8,
         0x3, 0xA, 0x6, 0xC, 0x5, 0x9, 0x0, 0x7]
 
-
 SIZE_SBOX = len(sbox)
 
-sbits = [format(sbox[i], "04b") for i in range(SIZE_SBOX)]
 key = 0b1010
 
 def parity(x):
@@ -25,14 +23,14 @@ def linearApprox(input_mask, output_mask):
 
     return matches - (SIZE_SBOX // 2)
 
-def encrypt(x, key, sbits):
-    return sbits[x ^ key]
+def encrypt(x, key):
+    return sbox[x ^ key]
 
-def generatePairs(num_pairs, key, sbits, bit_size=4):
+def generatePairs(num_pairs, key, bit_size=4):
     pairs = []
     for _ in range(num_pairs):
         x = random.randint(0, 2**bit_size - 1)
-        y = encrypt(x, key, sbits)
+        y = encrypt(x, key)
         pairs.append((x, y))
     return pairs
 
@@ -50,10 +48,10 @@ def main():
             sys.stdout.write(f"{val:>3} ")
         print()
     
-    pairs = generatePairs(10, key, sbits)
+    pairs = generatePairs(10, key)
     print("\nGenerated pairs (x, y):")
     for x, y in pairs:
-        print(f"({x:04b}, {y})")
+        print(f"({x:04b}, {y:04b})")
 
 if __name__ == "__main__":
     main()
