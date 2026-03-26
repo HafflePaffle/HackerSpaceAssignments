@@ -34,6 +34,31 @@ def generatePairs(num_pairs, key, bit_size=4):
         pairs.append((x, y))
     return pairs
 
+def recover_key_bit(pairs, input_mask, output_mask):
+    votes = [0, 0] 
+
+    for x, y in pairs:
+        lhs = parity(x & input_mask)
+        rhs = parity(y & output_mask)
+        guessed_parity = lhs ^ rhs
+        votes[guessed_parity] += 1
+
+    recovered = 0 if votes[0] > votes[1] else 1
+    return votes, recovered
+
+
+def key_recovery(pairs, input_mask, output_mask, bias):
+    print("\nKey recovery using linear approximation")
+
+    votes, recovered = recover_key_bit(pairs, input_mask, output_mask)
+
+    if bias < 0:
+        votes = [votes[1], votes[0]]
+        recovered = 0 if votes[0] > votes[1] else 1
+
+    print(f"Recovered parity(K & {input_mask:04b}) = {recovered}")
+    return recovered
+
 def main():
     sys.stdout.write("    | ")
     for i in range(SIZE_SBOX):
@@ -48,10 +73,17 @@ def main():
             sys.stdout.write(f"{val:>3} ")
         print()
     
-    pairs = generatePairs(10, key)
+    pairs = generatePairs(5000, key)
     print("\nGenerated pairs (x, y):")
-    for x, y in pairs:
+    for x, y in pairs[:10]: 
         print(f"({x:04b}, {y:04b})")
+
+    input_mask = 0b0110
+    output_mask = 0b0101
+    bias = 4
+
+    recovered = key_recovery(pairs, input_mask, output_mask, bias)
+    print(f"\nActual parity(K & {input_mask:04b}) = {parity(key & input_mask)}")
 
 if __name__ == "__main__":
     main()
